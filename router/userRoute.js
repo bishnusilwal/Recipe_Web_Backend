@@ -4,7 +4,13 @@ const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const router = new express.Router();
 
-const user = require("../models/usermodel")
+const user = require("../models/usermodel");
+
+const{appendFile}= require("fs");
+const auth = require("../auth/auth");
+
+
+const { append } = require("express/lib/response");
 router.post("/user/register",function(req,res){
     const username =req.body.username;
     user.findOne({username : username}) 
@@ -15,23 +21,23 @@ router.post("/user/register",function(req,res){
         }
         //now this place is for the user which is not available in db
         const password = req.body.password;
-        const fullname = req.body.fullname;
-        const email = req.body.email;
-        const phone = req.body.phone;
-        const location = req.body.location;
-        const bio = req.body.bio;
-        const img = req.body.img;
+        // const fullname = req.body.fullname;
+        // const email = req.body.email;
+        // const phone = req.body.phone;
+        // const location = req.body.location;
+        // const bio = req.body.bio;
+        // const img = req.body.img;
         bcryptjs.hash(password,10,function(e,hashed_value){
             const data = new user({
                 username : username,
-                password: hashed_value,
-                fullname : fullname,
-                email : email,
+                password: hashed_value
+                // fullname : fullname,
+                // email : email,
 
-                phone : phone,
-                location : location,
-                bio : bio,
-                img : img,
+                // phone : phone,
+                // location : location,
+                // bio : bio,
+                // img : img,
                 
 
 
@@ -49,6 +55,8 @@ router.post("/user/register",function(req,res){
 
 
     })
+    
+
 
 })
 
@@ -89,9 +97,23 @@ router.post("/user/login", function(req,res){
 
     
 })
+router.delete("/user/delete",auth.verifyUser,function(req,res){
+    res.json({message:"req.userInfo.username"})
+
+
+})
+
+
+router.get("/profile",auth.verifyUser,function(req,res){
+    user.findOne({_id : Udata})
+    res.json({message:req.userInfo.username})
+})
 
 
 
+router.put("/update",auth.verifyUser,function(req,res){
+    req.userInfo.username
+})
 
 
 // // get all recipe
